@@ -29,12 +29,10 @@ class SignUpView(APIView):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if not isinstance(serializer.validated_data, User):
-            email = serializer.validated_data['email']
-            username = serializer.validated_data['username']
-            user = User.objects.create(username=username, email=email)
-        else:
+        if isinstance(serializer.validated_data, User):
             user = serializer.validated_data
+        else:
+            user = serializer.save()
 
         token = default_token_generator.make_token(user)
         self.send_confirmation_code(token, user.email)
