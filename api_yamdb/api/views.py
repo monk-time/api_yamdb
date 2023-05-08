@@ -3,18 +3,27 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import User
-from .serializers import SignUpSerializer, TokenSerializer, UserSerializer
+from .permissions import IsAdminOrSuperUser
+from .serializers import (
+    SignUpSerializer,
+    TokenSerializer,
+    UserMeSerializer,
+    UserSerializer,
+)
 
 
 class SignUpView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
 
     @staticmethod
     def send_confirmation_code(token: str, email: str):
@@ -36,11 +45,11 @@ class SignUpView(APIView):
 
         token = default_token_generator.make_token(user)
         self.send_confirmation_code(token, user.email)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
 
 class AuthTokenView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = TokenSerializer(data=request.data)
@@ -57,12 +66,37 @@ class AuthTokenView(APIView):
             )
 
         access_token = AccessToken.for_user(user)
-        return Response(
-            {'token': str(access_token)},
-            status=status.HTTP_200_OK,
-        )
+        return Response({'token': str(access_token)})
 
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAdminOrSuperUser,)
+    pagination_class = PageNumberPagination
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+    http_method_names = ('get', 'post', 'patch', 'delete')
+
+    def get_serializer_class(self):
+        if self.action == 'me':
+            return UserMeSerializer
+        return self.serializer_class
+
+    @action(
+        detail=False,
+        methods=('get', 'patch'),
+        permission_classes=(IsAuthenticated,),
+    )
+    def me(self, request):
+        if request.method == 'GET':
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+
+        serializer = self.get_serializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
