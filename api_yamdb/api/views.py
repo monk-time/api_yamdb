@@ -16,16 +16,8 @@ from .serializers import SignUpSerializer, TokenSerializer, UserSerializer
 class SignUpView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
-        serializer = SignUpSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        email = serializer.validated_data.get('email')
-        username = serializer.validated_data.get('username')
-        user = get_object_or_404(User, username=username, email=email)
-
-        token = default_token_generator.make_token(user)
-
+    @staticmethod
+    def send_confirmation_code(token: str, email: str):
         send_mail(
             subject='Код подтверждения для API YaMDb',
             message=f'Ваш код подтверждения: {token}',
@@ -33,10 +25,20 @@ class SignUpView(APIView):
             recipient_list=[email],
         )
 
-        return Response(
-            {'email': email, 'username': username},
-            status=status.HTTP_200_OK,
-        )
+    def post(self, request):
+        serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if not isinstance(serializer.validated_data, User):
+            email = serializer.validated_data['email']
+            username = serializer.validated_data['username']
+            user = User.objects.create(username=username, email=email)
+        else:
+            user = serializer.validated_data
+
+        token = default_token_generator.make_token(user)
+        self.send_confirmation_code(token, user.email)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AuthTokenView(APIView):
