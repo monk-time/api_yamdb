@@ -13,7 +13,11 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import User
-from .permissions import IsAdminOrSuperUser
+from .permissions import (
+    IsAdminOrSuper,
+    IsAdminOrReadOnly,
+    IsStaffOrAuthorOrReadOnly,
+)
 from .serializers import (
     SignUpSerializer,
     TokenSerializer,
@@ -72,7 +76,7 @@ class AuthTokenView(APIView):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOrSuperUser,)
+    permission_classes = (IsAdminOrSuper,)
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
     search_fields = ('username',)
