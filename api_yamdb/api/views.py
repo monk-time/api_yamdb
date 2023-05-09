@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import User
+from reviews.models import User, Title, Review
 from .permissions import (
     IsAdminOrSuper,
     IsAdminOrReadOnly,
@@ -23,6 +23,7 @@ from .serializers import (
     TokenSerializer,
     UserMeSerializer,
     UserSerializer,
+    ReviewSerializer,
 )
 
 
@@ -104,3 +105,24 @@ class UserViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = (IsStaffOrAuthorOrReadOnly,)  # нужно будет проверить
+    pagination_class = PageNumberPagination
+
+    def title_get(self):
+        return get_object_or_404(
+            Title,
+            pk=self.kwargs.get('title_get'),
+        )
+
+    def get_queryset(self):
+        return self.title_get().reviews.all()
+
+    def perform_create(self, serializer):
+        return serializer.save(
+            author=self.request.user,
+            title=self.title_get(),
+        )

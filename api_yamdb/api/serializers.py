@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from reviews.models import User
+from reviews.models import User, Review
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -41,3 +41,20 @@ class UserMeSerializer(serializers.ModelSerializer):
         model = User
         fields = USER_FIELDS
         read_only_fields = ('role',)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+
+    class Meta:
+        model = Review
+        fields = (
+            'id',
+            'text',
+            'author',
+            'score',
+            'pub_date',
+        )
