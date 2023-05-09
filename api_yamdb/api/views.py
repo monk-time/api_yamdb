@@ -7,12 +7,10 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import (
     PageNumberPagination,
-    LimitOffsetPagination,
 )
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
@@ -118,11 +116,11 @@ class TitleViewSet(ModelViewSet):
     '''Вьюсет названия произведения'''
 
     queryset = Title.objects.all()
-    pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
     permission_classes = [
         IsAdminOrReadOnly,
     ]
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (SearchFilter,)
     search_fields = (
         '=category',
         '=genre',
@@ -142,11 +140,11 @@ class GenreViewSet(ModelViewSet):
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
     permission_classes = [
         IsAdminOrReadOnly,
     ]
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (SearchFilter,)
     search_fields = ('=name',)
     max_search_results = 10
 
@@ -156,10 +154,10 @@ class CategoryViewSet(ModelViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = PageNumberPagination
     permission_classes = [
         IsAdminOrReadOnly,
     ]
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (SearchFilter,)
     search_fields = ('=name',)
     max_search_results = 10
