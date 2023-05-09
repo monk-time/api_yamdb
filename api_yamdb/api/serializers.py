@@ -51,6 +51,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
     '''Сериализатор категорий произведения.'''
 
     class Meta:
+        fields = '__all__'
         model = Сategory
 
 
@@ -58,10 +59,43 @@ class GenresSerializer(serializers.ModelSerializer):
     '''Сериализатор жанра произведения.'''
 
     class Meta:
+        fields = '__all__'
         model = Genre
 
 
-class TitlesSerializer(serializers.ModelSerializer):
-    '''Сериализатор названия произведения.'''
+class TitlesPostSerializer(serializers.ModelSerializer):
+    '''Сериализатор названия произведения для POST и PATH методов.'''
 
-    ...
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True,
+        required=True,
+    )
+    category = serializers.SlugRelatedField(
+        queryset=Сategory.objects.all(),
+        slug_field='slug',
+        many=False,
+        required=True,
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+
+class TitlesPostSerializer(serializers.ModelSerializer):
+    '''Сериализатор названия произведения для GET методов.'''
+
+    genre = GenresSerializer(
+        many=True,
+        required=False,
+    )
+    category = TitlesPostSerializer(
+        many=False,
+        required=False,
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
