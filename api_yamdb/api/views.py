@@ -5,14 +5,18 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import (
+    PageNumberPagination,
+    LimitOffsetPagination,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import User
+from reviews.models import User, Title, Genre, Category
 from .permissions import (
     IsAdminOrSuper,
     IsAdminOrReadOnly,
@@ -23,6 +27,10 @@ from .serializers import (
     TokenSerializer,
     UserMeSerializer,
     UserSerializer,
+    TitleGetSerializer,
+    TitlePostSerializer,
+    GenreSerializer,
+    CategorySerializer,
 )
 
 
@@ -109,16 +117,49 @@ class UserViewSet(ModelViewSet):
 class TitleViewSet(ModelViewSet):
     '''Вьюсет названия произведения'''
 
-    ...
+    queryset = Title.objects.all()
+    pagination_class = LimitOffsetPagination
+    permission_classes = [
+        IsAdminOrReadOnly,
+    ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = (
+        '=category',
+        '=genre',
+        '=name',
+        '=year',
+    )
+    max_search_results = 10
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PATH':
+            return TitlePostSerializer
+        return TitleGetSerializer
 
 
 class GenreViewSet(ModelViewSet):
     '''Вьюсет названия произведения'''
 
-    ...
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = LimitOffsetPagination
+    permission_classes = [
+        IsAdminOrReadOnly,
+    ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=name',)
+    max_search_results = 10
 
 
 class CategoryViewSet(ModelViewSet):
     '''Вьюсет названия произведения'''
 
-    ...
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = LimitOffsetPagination
+    permission_classes = [
+        IsAdminOrReadOnly,
+    ]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('=name',)
+    max_search_results = 10

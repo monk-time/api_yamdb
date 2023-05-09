@@ -16,9 +16,9 @@ app_name = 'api'
 
 router_v1 = DefaultRouter()
 router_v1.register(r'users', UserViewSet, basename='user')
-router_v1.register('titles', TitleViewSet, basename='titles')
-router_v1.register('genres', GenreViewSet, basename='genres')
-router_v1.register('categories', CategoryViewSet, basename='categories')
+router_v1.register('titles', TitleViewSet, basename='title')
+router_v1.register('genres', GenreViewSet, basename='genre')
+router_v1.register('categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
     path('v1/auth/signup/', SignUpView.as_view(), name='signup'),

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from reviews.models import Сategory, Genre, Title
+from reviews.models import Category, Genre, Title
 from reviews.models import User
 
 
@@ -47,15 +47,15 @@ class UserMeSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     '''Сериализатор категорий произведения.'''
 
     class Meta:
         fields = '__all__'
-        model = Сategory
+        model = Category
 
 
-class GenresSerializer(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     '''Сериализатор жанра произведения.'''
 
     class Meta:
@@ -63,20 +63,17 @@ class GenresSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class TitlesPostSerializer(serializers.ModelSerializer):
+class TitlePostSerializer(serializers.ModelSerializer):
     '''Сериализатор названия произведения для POST и PATH методов.'''
 
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
         slug_field='slug',
         many=True,
-        required=True,
     )
     category = serializers.SlugRelatedField(
-        queryset=Сategory.objects.all(),
+        queryset=Category.objects.all(),
         slug_field='slug',
-        many=False,
-        required=True,
     )
 
     class Meta:
@@ -84,18 +81,17 @@ class TitlesPostSerializer(serializers.ModelSerializer):
         model = Title
 
 
-class TitlesPostSerializer(serializers.ModelSerializer):
+class TitleGetSerializer(serializers.ModelSerializer):
     '''Сериализатор названия произведения для GET методов.'''
 
-    genre = GenresSerializer(
-        many=True,
-        required=False,
-    )
-    category = TitlesPostSerializer(
-        many=False,
-        required=False,
-    )
+    genre = GenreSerializer(read_only=True, many=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def get_rating(self, obj):
+        reviews = obj.reviews.all()
+        return sum(review.score for review in reviews) / len(reviews)
