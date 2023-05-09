@@ -40,7 +40,4 @@ class UserMeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = USER_FIELDS
-
-    def update(self, instance, validated_data):
-        validated_data.pop('role', None)
-        return super().update(instance, validated_data)
+        read_only_fields = ('role',)
