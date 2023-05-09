@@ -90,7 +90,6 @@ class UserViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=('get',),
         permission_classes=(IsAuthenticated,),
     )
     def me(self, request):
