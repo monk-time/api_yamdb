@@ -121,6 +121,7 @@ class Title(models.Model):
 # нужно предусмотреть чтобы один пользователь
 # может оставить один отзывf
 class Review(models.Model):
+    """Модель Отзывов на произведения"""
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -158,6 +159,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+    """Модель Комментариев к отзывам """
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

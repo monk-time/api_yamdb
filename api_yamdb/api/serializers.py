@@ -113,3 +113,18 @@ class ReviewSerializer(serializers.ModelSerializer):
             'pub_date',
         )
         
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+
+    class Meta: # попробовать exclude review
+        model = Review
+        fields = (
+            'id',
+            'text',
+            'author',
+            'pub_date',
+        )
