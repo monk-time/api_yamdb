@@ -58,11 +58,6 @@ class Genre(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
-
-    class Meta:
-        ordering = ('name',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -86,7 +81,7 @@ class Category(models.Model):
 
 
 class Title(models.Model):
-    """Модель названия произведения"""
+    """Модель произведения"""
 
     name = models.CharField(max_length=256, verbose_name='Название')
     year = models.IntegerField(
@@ -97,7 +92,7 @@ class Title(models.Model):
         Genre,
         related_name='titles',
         verbose_name='Slug жанра',
-        help_text='Жанр, к которому будет относиться произведение',
+        help_text='Жанры произведения',
     )
     category = models.ForeignKey(
         Category,
@@ -105,7 +100,7 @@ class Title(models.Model):
         null=True,
         related_name='titles',
         verbose_name='Slug категории',
-        help_text='Категория, к которому будет относиться произведение',
+        help_text='Категория произведения',
     )
 
     class Meta:
