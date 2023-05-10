@@ -48,7 +48,7 @@ class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор категорий произведения."""
 
     class Meta:
-        exclude = ['id']
+        exclude = ('id',)
         model = Category
 
 
@@ -56,7 +56,7 @@ class GenreSerializer(serializers.ModelSerializer):
     """Сериализатор жанра произведения."""
 
     class Meta:
-        exclude = ['id']
+        exclude = ('id',)
         model = Genre
 
 
@@ -112,3 +112,4 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'pub_date',
         )
+        

@@ -167,19 +167,15 @@ class CategoryViewSet(
 
 class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsStaffOrAuthorOrReadOnly,)  # нужно будет проверить
+    permission_classes = (IsStaffOrAuthorOrReadOnly,)
 
-    def title_get(self):
-        return get_object_or_404(
-            Title,
-            pk=self.kwargs.get('title_get'),
-        )
+    def get_title(self):
+        return get_object_or_404(Title, pk=self.kwargs['title_id'])
 
     def get_queryset(self):
-        return self.title_get().reviews.all()
+        return self.get_title().reviews.all()
 
     def perform_create(self, serializer):
         return serializer.save(
-            author=self.request.user,
-            title=self.title_get(),
+            author=self.request.user, title=self.get_title()
         )
