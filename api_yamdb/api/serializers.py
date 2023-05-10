@@ -49,7 +49,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
     )
 
-    class Meta:
+    class Meta: # попробовать exclude title
         model = Review
         fields = (
             'id',

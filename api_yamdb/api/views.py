@@ -110,7 +110,6 @@ class UserViewSet(ModelViewSet):
 class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)  # нужно будет проверить
-    pagination_class = PageNumberPagination
 
     def title_get(self):
         return get_object_or_404(

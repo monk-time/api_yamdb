@@ -57,20 +57,20 @@ class Title(models.Model):
 # нужно предусмотреть чтобы один пользователь
 # может оставить один отзыв
 class Review(models.Model):
-    author = models.ForeignKey(
-        # verbose_name='Автор отзыва',
+    author = models.ForeignKey(        
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
+        verbose_name='Автор отзыва',
     )
-    title = models.ForeignKey(
-        # 'Произведение',
+    title = models.ForeignKey(        
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
+        verbose_name='Произведение',
     )
     text = models.TextField(
-        # 'Текст отзыва',
+        verbose_name='Текст отзыва',
     )
     score = models.IntegerField(
         'Оценка от 1 до 10(обязательно)',
