@@ -2,33 +2,31 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import (
-    PageNumberPagination,
-)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Title, User
 
-from reviews.models import User, Title, Genre, Category
 from .permissions import (
-    IsAdminOrSuper,
     IsAdminOrReadOnly,
+    IsAdminOrSuper,
     IsStaffOrAuthorOrReadOnly,
 )
 from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
     SignUpSerializer,
+    TitleGetSerializer,
+    TitlePostSerializer,
     TokenSerializer,
     UserMeSerializer,
     UserSerializer,
-    TitleGetSerializer,
-    TitlePostSerializer,
-    GenreSerializer,
-    CategorySerializer,
 )
 
 
@@ -83,7 +81,6 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdminOrSuper,)
-    pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
@@ -113,51 +110,37 @@ class UserViewSet(ModelViewSet):
 
 
 class TitleViewSet(ModelViewSet):
-    '''Вьюсет названия произведения'''
+    """Вьюсет названия произведения"""
 
     queryset = Title.objects.all()
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        IsAdminOrReadOnly,
-    ]
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
-    search_fields = (
-        '=category',
-        '=genre',
-        '=name',
-        '=year',
-    )
+    search_fields = (DjangoFilterBackend,)
     max_search_results = 10
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PATH':
+        if self.request.method in ('POST', 'PATH'):
             return TitlePostSerializer
         return TitleGetSerializer
 
 
 class GenreViewSet(ModelViewSet):
-    '''Вьюсет названия произведения'''
+    """Вьюсет названия произведения"""
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        IsAdminOrReadOnly,
-    ]
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
     search_fields = ('=name',)
     max_search_results = 10
 
 
 class CategoryViewSet(ModelViewSet):
-    '''Вьюсет названия произведения'''
+    """Вьюсет названия произведения"""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = PageNumberPagination
-    permission_classes = [
-        IsAdminOrReadOnly,
-    ]
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
     search_fields = ('=name',)
     max_search_results = 10
