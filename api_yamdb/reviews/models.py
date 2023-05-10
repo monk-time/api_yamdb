@@ -118,8 +118,6 @@ class Title(models.Model):
         return self.name
 
 
-# нужно предусмотреть чтобы один пользователь
-# может оставить один отзывf
 class Review(models.Model):
     """Модель Отзывов на произведения"""
     author = models.ForeignKey(

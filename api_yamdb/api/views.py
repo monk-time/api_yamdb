@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import Category, Genre, Title, User
+from reviews.models import Category, Genre, Review, Title, User
 
 from .filters import TitleFilter
 from .permissions import (
@@ -27,6 +27,7 @@ from .permissions import (
 )
 from .serializers import (
     CategorySerializer,
+    CommentSerializer,
     GenreSerializer,
     ReviewSerializer,
     SignUpSerializer,
@@ -166,6 +167,7 @@ class CategoryViewSet(
 
 
 class ReviewViewSet(ModelViewSet):
+    """Вьюсет для отзывов"""
     serializer_class = ReviewSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
 
@@ -178,4 +180,21 @@ class ReviewViewSet(ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save(
             author=self.request.user, title=self.get_title()
+        )
+
+
+class CommentViewSet(ModelViewSet):
+    """Вьюсет для Комментариев"""
+    serializer_class = CommentSerializer
+    permission_classes = (IsStaffOrAuthorOrReadOnly,)
+
+    def get_review(self):
+        return get_object_or_404(Review, pk=self.kwargs['review_id'])
+
+    def get_queryset(self):
+        return self.get_review().comments.all()
+
+    def perform_create(self, serializer):
+        return serializer.save(
+            author=self.request.user, review=self.get_review()
         )
