@@ -2,28 +2,39 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import User, Title, Review
+from reviews.models import Category, Genre, Title, User
+
+from .filters import TitleFilter
 from .permissions import (
-    IsAdminOrSuper,
     IsAdminOrReadOnly,
+    IsAdminOrSuper,
     IsStaffOrAuthorOrReadOnly,
 )
 from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    ReviewSerializer,
     SignUpSerializer,
+    TitleGetSerializer,
+    TitlePostSerializer,
     TokenSerializer,
     UserMeSerializer,
     UserSerializer,
-    ReviewSerializer,
 )
 
 
@@ -78,33 +89,80 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAdminOrSuper,)
-    pagination_class = PageNumberPagination
     filter_backends = (SearchFilter,)
     search_fields = ('username',)
     lookup_field = 'username'
     http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_serializer_class(self):
-        if self.action == 'me':
+        if self.action in ('me', 'patch_me'):
             return UserMeSerializer
         return self.serializer_class
 
     @action(
         detail=False,
-        methods=('get', 'patch'),
         permission_classes=(IsAuthenticated,),
     )
     def me(self, request):
-        if request.method == 'GET':
-            serializer = self.get_serializer(request.user)
-            return Response(serializer.data)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
+    @me.mapping.patch
+    def patch_me(self, request):
         serializer = self.get_serializer(
             request.user, data=request.data, partial=True
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class TitleViewSet(ModelViewSet):
+    """Вьюсет названия произведения"""
+
+    queryset = Title.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST', 'PATCH'):
+            return TitlePostSerializer
+        return TitleGetSerializer
+
+
+class GenreViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    """Вьюсет названия произведения"""
+
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (SearchFilter,)
+    search_fields = ('=name',)
+    max_search_results = 10
+
+
+class CategoryViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    """Вьюсет названия произведения"""
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (SearchFilter,)
+    search_fields = ('=name',)
+    max_search_results = 10
 
 
 class ReviewViewSet(ModelViewSet):
