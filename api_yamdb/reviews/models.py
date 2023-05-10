@@ -119,7 +119,7 @@ class Title(models.Model):
 
 
 # нужно предусмотреть чтобы один пользователь
-# может оставить один отзыв
+# может оставить один отзывf
 class Review(models.Model):
     author = models.ForeignKey(        
         User,
