@@ -60,8 +60,8 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class TitlePostSerializer(serializers.ModelSerializer):
-    """Сериализатор названия произведения для POST и PATCH методов."""
+class TitleWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор произведения для записи."""
 
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
@@ -82,8 +82,8 @@ class TitlePostSerializer(serializers.ModelSerializer):
     #     return obj.reviews.aggregate(rating=Avg('score'))['rating']
 
 
-class TitleGetSerializer(serializers.ModelSerializer):
-    """Сериализатор названия произведения для GET методов."""
+class TitleReadSerializer(serializers.ModelSerializer):
+    """Сериализатор произведения для чтения."""
 
     genre = GenreSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
