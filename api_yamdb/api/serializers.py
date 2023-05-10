@@ -61,7 +61,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitlePostSerializer(serializers.ModelSerializer):
-    """Сериализатор названия произведения для POST и PATH методов."""
+    """Сериализатор названия произведения для POST и PATCH методов."""
 
     genre = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
@@ -72,10 +72,14 @@ class TitlePostSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         slug_field='slug',
     )
+    # rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    # def get_rating(self, obj):
+    #     return obj.reviews.aggregate(rating=Avg('score'))['rating']
 
 
 class TitleGetSerializer(serializers.ModelSerializer):
@@ -83,11 +87,11 @@ class TitleGetSerializer(serializers.ModelSerializer):
 
     genre = GenreSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
-    rating = serializers.SerializerMethodField()
+    # rating = serializers.SerializerMethodField()
 
     class Meta:
         fields = '__all__'
         model = Title
 
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(rating=Avg('score'))['rating']
+    # def get_rating(self, obj):
+    #     return obj.reviews.aggregate(rating=Avg('score'))['rating']
