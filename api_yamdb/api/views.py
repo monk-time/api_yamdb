@@ -168,6 +168,7 @@ class CategoryViewSet(
 
 class ReviewViewSet(ModelViewSet):
     """Вьюсет для отзывов"""
+
     serializer_class = ReviewSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
 
@@ -185,6 +186,7 @@ class ReviewViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     """Вьюсет для Комментариев"""
+
     serializer_class = CommentSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
 

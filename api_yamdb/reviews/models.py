@@ -120,6 +120,7 @@ class Title(models.Model):
 
 class Review(models.Model):
     """Модель Отзывов на произведения"""
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -157,7 +158,8 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель Комментариев к отзывам """
+    """Модель Комментариев к отзывам"""
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -172,7 +174,8 @@ class Comment(models.Model):
     )
     text = models.TextField('Текст комментария')
     pub_date = models.DateTimeField(
-        'Дата публикации комментария', auto_now_add=True,
+        'Дата публикации комментария',
+        auto_now_add=True,
     )
 
     class Meta:

@@ -1,5 +1,5 @@
 from django.db.models import Avg
-from rest_framework import serializers
+from rest_framework import serializers, validators
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
@@ -96,16 +96,22 @@ class TitleGetSerializer(serializers.ModelSerializer):
     # def get_rating(self, obj):
     #     return obj.reviews.aggregate(rating=Avg('score'))['rating']
 
+
 # нужно предусмотреть чтобы один пользователь
 # может оставить один отзывf
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для Отзывов"""
+
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
     )
+    # title = serializers.PrimaryKeyRelatedField(
+    #     read_only=True,
+    #     default=serializers.CurrentUserDefault(),
+    # )
 
-    class Meta: # попробовать exclude title
+    class Meta:  # попробовать exclude title
         model = Review
         fields = (
             'id',
@@ -113,17 +119,32 @@ class ReviewSerializer(serializers.ModelSerializer):
             'author',
             'score',
             'pub_date',
+            # 'title',
         )
-        
+        # validators = [
+        #     validators.UniqueTogetherValidator(
+        #         queryset=Review.objects.all(),
+        #         fields=('author','title'),
+        #         message='Нельзя оставлять отзыв дважды на одно и тоже произвдение',
+        #     )            
+        # ]
+
+    # def validate_author(self, value):
+    #     if self.context['request'].author == value:
+    #         raise serializers.ValidationError(
+    #             "Нельзя оставлять отзыв дважды на одно и тоже произвдение"
+    #         )
+
 
 class CommentSerializer(serializers.ModelSerializer):
     """Сериализатор для Комментариев"""
+
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
     )
 
-    class Meta: # попробовать exclude review
+    class Meta:  # попробовать exclude review
         model = Comment
         fields = (
             'id',
