@@ -5,8 +5,8 @@ from .views import (
     AuthTokenView,
     CategoryViewSet,
     GenreViewSet,
-    SignUpView,
     ReviewViewSet,
+    SignUpView,
     TitleViewSet,
     UserViewSet,
 )

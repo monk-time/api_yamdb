@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from .validators import validate_username_not_me, validate_year
@@ -167,7 +167,8 @@ class Comment(models.Model):
     )
     text = models.TextField('Текст комментария')
     pub_date = models.DateTimeField(
-        'Дата публикации комментария', auto_now_add=True,
+        'Дата публикации комментария',
+        auto_now_add=True,
     )
 
     class Meta:
