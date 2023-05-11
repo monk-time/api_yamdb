@@ -106,11 +106,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
     )
 
-    # title = serializers.SlugRelatedField(
-    #     read_only=True,
-    #     slug_field='name'
-    # )
-
     class Meta:  # попробовать exclude title
         model = Review
         fields = (
@@ -120,25 +115,13 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'pub_date',
         )
-        # validators = [
-        #     validators.UniqueTogetherValidator(
-        #         queryset=Review.objects.all(),
-        #         fields=('author','title'),
-        #         message='Нельзя оставлять отзыв дважды на одно и тоже произвдение',
-        #     )
-        # ]
 
     def validate(self, attrs):
         request = self.context['request']
         if request.method == 'POST':
-            author = request.user
-            title_id = self.context.get('view').kwargs.get('title_id')
+            title_id = self.context['view'].kwargs['title_id']
             title = get_object_or_404(Title, pk=title_id)
-            if (
-                Review.objects.filter(title=title)
-                .filter(author=author)
-                .exists()
-            ):
+            if title.reviews.filter(author=request.user).exists():
                 raise validators.ValidationError(
                     'Нельзя оставлять отзыв дважды на одно и тоже произвдение'
                 )
