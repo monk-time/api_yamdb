@@ -1,4 +1,5 @@
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers, validators
 
 from reviews.models import Category, Comment, Genre, Review, Title, User
@@ -97,8 +98,6 @@ class TitleGetSerializer(serializers.ModelSerializer):
     #     return obj.reviews.aggregate(rating=Avg('score'))['rating']
 
 
-# нужно предусмотреть чтобы один пользователь
-# может оставить один отзывf
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для Отзывов"""
 
@@ -106,9 +105,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username',
     )
-    # title = serializers.PrimaryKeyRelatedField(
+
+    # title = serializers.SlugRelatedField(
     #     read_only=True,
-    #     default=serializers.CurrentUserDefault(),
+    #     slug_field='name'
     # )
 
     class Meta:  # попробовать exclude title
@@ -119,21 +119,30 @@ class ReviewSerializer(serializers.ModelSerializer):
             'author',
             'score',
             'pub_date',
-            # 'title',
         )
         # validators = [
         #     validators.UniqueTogetherValidator(
         #         queryset=Review.objects.all(),
         #         fields=('author','title'),
         #         message='Нельзя оставлять отзыв дважды на одно и тоже произвдение',
-        #     )            
+        #     )
         # ]
 
-    # def validate_author(self, value):
-    #     if self.context['request'].author == value:
-    #         raise serializers.ValidationError(
-    #             "Нельзя оставлять отзыв дважды на одно и тоже произвдение"
-    #         )
+    def validate(self, attrs):
+        request = self.context['request']
+        if request.method == 'POST':
+            author = request.user
+            title_id = self.context.get('view').kwargs.get('title_id')
+            title = get_object_or_404(Title, pk=title_id)
+            if (
+                Review.objects.filter(title=title)
+                .filter(author=author)
+                .exists()
+            ):
+                raise validators.ValidationError(
+                    'Нельзя оставлять отзыв дважды на одно и тоже произвдение'
+                )
+        return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):
