@@ -28,6 +28,7 @@ from .permissions import (
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
+    ReviewSerializer,
     SignUpSerializer,
     TitleReadSerializer,
     TitleWriteSerializer,
@@ -162,3 +163,19 @@ class CategoryViewSet(
     filter_backends = (SearchFilter,)
     search_fields = ('=name',)
     max_search_results = 10
+
+
+class ReviewViewSet(ModelViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = (IsStaffOrAuthorOrReadOnly,)
+
+    def get_title(self):
+        return get_object_or_404(Title, pk=self.kwargs['title_id'])
+
+    def get_queryset(self):
+        return self.get_title().reviews.all()
+
+    def perform_create(self, serializer):
+        return serializer.save(
+            author=self.request.user, title=self.get_title()
+        )
