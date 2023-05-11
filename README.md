@@ -25,6 +25,8 @@ git clone https://github.com/monk-time/api_yamdb.git
 cd api_yamdb
 ```
 
+Для Linux/macOS здесь и далее используем python3 взамен python.
+
 Cоздать и активировать виртуальное окружение:
 
 ```
