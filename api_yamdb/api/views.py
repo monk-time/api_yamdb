@@ -31,8 +31,8 @@ from .serializers import (
     GenreSerializer,
     ReviewSerializer,
     SignUpSerializer,
-    TitleGetSerializer,
-    TitlePostSerializer,
+    TitleReadSerializer,
+    TitleWriteSerializer,
     TokenSerializer,
     UserMeSerializer,
     UserSerializer,
@@ -128,8 +128,8 @@ class TitleViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH'):
-            return TitlePostSerializer
-        return TitleGetSerializer
+            return TitleWriteSerializer
+        return TitleReadSerializer
 
 
 class GenreViewSet(
