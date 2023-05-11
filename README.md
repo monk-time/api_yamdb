@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# api_yamdb
-api_yamdb123
-=======
 # YaMDb
 
 ### Описание
@@ -177,4 +173,3 @@ POST /api/v1/users/
 Евгений Мокрушин [@JRushFobos](https://github.com/JRushFobos) (разработчик) - категории, жанры и произведения: модели, view и эндпойнты. Импорт данных в базу данных из .csv файлов.
 
 Ленар Фазлыев [@LenarFazlyev](https://github.com/LenarFazlyev) (разработчик) - отзывы и комментарии: модели, view и эндпойнты. Рейтинги произведений.
->>>>>>> develop
