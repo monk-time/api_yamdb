@@ -31,12 +31,10 @@ class Command(BaseCommand):
                             title.genre.add(genre)
                     else:
                         for row in reader:
-                            if "category" in row:
-                                category = row.pop("category")
-                                row["category_id"] = category
-                            if "author" in row:
-                                author = row.pop("author")
-                                row["author_id"] = author
+                            for key in ("category", "author"):
+                                if key in row:
+                                    value = row.pop(key)
+                                    row[f"{key}_id"] = value
                             model.objects.create(**row)
             except FileNotFoundError:
                 raise CommandError(f"Файл {file_name} не найден")
