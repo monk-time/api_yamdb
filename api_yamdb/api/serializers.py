@@ -106,15 +106,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
     )
 
-    class Meta:  # попробовать exclude title
+    class Meta:
         model = Review
-        fields = (
-            'id',
-            'text',
-            'author',
-            'score',
-            'pub_date',
-        )
+        exclude = ('title',)
 
     def validate(self, attrs):
         request = self.context['request']
@@ -136,11 +130,6 @@ class CommentSerializer(serializers.ModelSerializer):
         slug_field='username',
     )
 
-    class Meta:  # попробовать exclude review
+    class Meta:
         model = Comment
-        fields = (
-            'id',
-            'text',
-            'author',
-            'pub_date',
-        )
+        exclude = ('review',)
