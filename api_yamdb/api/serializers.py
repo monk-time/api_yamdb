@@ -1,7 +1,8 @@
 from django.db.models import Avg
-from rest_framework import serializers
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers, validators
 
-from reviews.models import Category, Genre, Review, Title, User
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -98,6 +99,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для Отзывов"""
+
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
@@ -105,10 +108,28 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = (
-            'id',
-            'text',
-            'author',
-            'score',
-            'pub_date',
-        )
+        exclude = ('title',)
+
+    def validate(self, attrs):
+        request = self.context['request']
+        if request.method == 'POST':
+            title_id = self.context['view'].kwargs['title_id']
+            title = get_object_or_404(Title, pk=title_id)
+            if title.reviews.filter(author=request.user).exists():
+                raise validators.ValidationError(
+                    'Нельзя оставлять отзыв дважды на одно и тоже произвдение'
+                )
+        return attrs
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для Комментариев"""
+
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+
+    class Meta:
+        model = Comment
+        exclude = ('review',)
