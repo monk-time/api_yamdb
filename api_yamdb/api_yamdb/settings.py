@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'users',
     'reviews',
     'api',
 ]
@@ -110,7 +111,7 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 # Project settings
 
-AUTH_USER_MODEL = 'reviews.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

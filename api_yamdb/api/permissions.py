@@ -1,13 +1,6 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
-class IsAdminOrSuper(BasePermission):
-    message = 'Доступ разрешен только администратору'
-
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_admin_or_super
-
-
 class IsAdminOrReadOnly(BasePermission):
     message = 'Доступ разрешен только администратору'
 
