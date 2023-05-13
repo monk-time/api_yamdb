@@ -37,6 +37,9 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
+    def to_representation(self, instance):
+        return TitleReadSerializer(instance).data
+
 
 class TitleReadSerializer(serializers.ModelSerializer):
     """Сериализатор произведения для чтения."""
