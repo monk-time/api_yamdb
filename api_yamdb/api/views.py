@@ -25,6 +25,7 @@ from .permissions import (
     IsAdminOrSuper,
     IsStaffOrAuthorOrReadOnly,
 )
+from .mixins import ListCreateDestroyViewSet
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -131,12 +132,7 @@ class TitleViewSet(ModelViewSet):
         return TitleReadSerializer
 
 
-class GenreViewSet(
-    ListModelMixin,
-    CreateModelMixin,
-    DestroyModelMixin,
-    GenericViewSet,
-):
+class GenreViewSet(ListCreateDestroyViewSet, GenericViewSet):
     """Вьюсет названия произведения"""
 
     queryset = Genre.objects.all()
