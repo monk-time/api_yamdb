@@ -7,11 +7,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.mixins import (
-    CreateModelMixin,
-    DestroyModelMixin,
-    ListModelMixin,
-)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +16,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title, User
 
 from .filters import TitleFilter
+from .mixins import ListCreateDestroyMixin
 from .permissions import (
     IsAdminOrReadOnly,
     IsAdminOrSuper,
@@ -135,12 +131,7 @@ class TitleViewSet(ModelViewSet):
         return TitleReadSerializer
 
 
-class GenreViewSet(
-    ListModelMixin,
-    CreateModelMixin,
-    DestroyModelMixin,
-    GenericViewSet,
-):
+class GenreViewSet(ListCreateDestroyMixin, GenericViewSet):
     """Вьюсет названия произведения"""
 
     queryset = Genre.objects.all()
@@ -152,12 +143,7 @@ class GenreViewSet(
     max_search_results = 10
 
 
-class CategoryViewSet(
-    ListModelMixin,
-    CreateModelMixin,
-    DestroyModelMixin,
-    GenericViewSet,
-):
+class CategoryViewSet(ListCreateDestroyMixin, GenericViewSet):
     """Вьюсет названия произведения"""
 
     queryset = Category.objects.all()
