@@ -5,7 +5,7 @@ from rest_framework.mixins import (
 )
 
 
-class ListCreateDestroyViewSet(
+class ListCreateDestroyMixin(
     ListModelMixin, CreateModelMixin, DestroyModelMixin
 ):
     pass
