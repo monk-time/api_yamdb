@@ -1,7 +1,7 @@
 from rest_framework.mixins import (
-    ListModelMixin,
     CreateModelMixin,
     DestroyModelMixin,
+    ListModelMixin,
 )
 
 
