@@ -77,13 +77,9 @@ class UserViewSet(ModelViewSet):
     lookup_field = 'username'
     http_method_names = ('get', 'post', 'patch', 'delete')
 
-    def get_serializer_class(self):
-        if self.action in ('me', 'patch_me'):
-            return UserMeSerializer
-        return self.serializer_class
-
     @action(
         detail=False,
+        serializer_class=UserMeSerializer,
         permission_classes=(IsAuthenticated,),
     )
     def me(self, request):
