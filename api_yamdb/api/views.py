@@ -148,12 +148,7 @@ class GenreViewSet(ListCreateDestroyViewSet, GenericViewSet):
     max_search_results = 10
 
 
-class CategoryViewSet(
-    ListModelMixin,
-    CreateModelMixin,
-    DestroyModelMixin,
-    GenericViewSet,
-):
+class CategoryViewSet(ListCreateDestroyViewSet, GenericViewSet):
     """Вьюсет названия произведения"""
 
     queryset = Category.objects.all()
