@@ -9,10 +9,6 @@ from reviews.models import Category, Genre, Review, Title
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyMixin
 from .permissions import IsAdminOrReadOnly, IsStaffOrAuthorOrReadOnly
-from .permissions import (
-    IsAdminOrReadOnly,
-    IsStaffOrAuthorOrReadOnly,
-)
 from .serializers import (
     CategorySerializer,
     CommentSerializer,

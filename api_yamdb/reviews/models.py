@@ -80,34 +80,35 @@ class Title(models.Model):
         return self.name
 
 
-class Review(models.Model):
-    """Модель Отзывов на произведения"""
-
+class AbstractPost(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Автор отзыва',
+        related_name='%(class)ss',
+        verbose_name='Автор',
     )
+    text = models.TextField(verbose_name='Текст')
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class Review(AbstractPost):
+    """Модель Отзывов на произведения"""
+
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='Произведение',
     )
-    text = models.TextField(
-        verbose_name='Текст отзыва',
-    )
-    score = models.IntegerField(
+    score = models.PositiveIntegerField(
         'Оценка от 1 до 10 (обязательно)',
         validators=[
             MinValueValidator(MIN_SCORE),
             MaxValueValidator(MAX_SCORE),
         ],
-    )
-    pub_date = models.DateTimeField(
-        'Дата публиции отзыва',
-        auto_now_add=True,
     )
 
     class Meta:
@@ -125,25 +126,14 @@ class Review(models.Model):
         return self.text[:STR_LENGTH]
 
 
-class Comment(models.Model):
+class Comment(AbstractPost):
     """Модель Комментариев к отзывам"""
 
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Автор комментария',
-    )
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
         related_name='comments',
         verbose_name='Отзыв',
-    )
-    text = models.TextField('Текст комментария')
-    pub_date = models.DateTimeField(
-        'Дата публикации комментария',
-        auto_now_add=True,
     )
 
     class Meta:
