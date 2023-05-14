@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from .models import User
 
+USER_FIELDS = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
+
 
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,9 +27,6 @@ class SignUpSerializer(serializers.ModelSerializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
-
-
-USER_FIELDS = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -36,7 +36,7 @@ class TitleViewSet(ModelViewSet):
 
 
 class GenreViewSet(ListCreateDestroyMixin, GenericViewSet):
-    """Вьюсет названия произведения"""
+    """Вьюсет жанра произведения"""
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -48,7 +48,7 @@ class GenreViewSet(ListCreateDestroyMixin, GenericViewSet):
 
 
 class CategoryViewSet(ListCreateDestroyMixin, GenericViewSet):
-    """Вьюсет названия произведения"""
+    """Вьюсет категории произведения"""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -78,7 +78,7 @@ class ReviewViewSet(ModelViewSet):
 
 
 class CommentViewSet(ModelViewSet):
-    """Вьюсет для Комментариев"""
+    """Вьюсет для комментариев"""
 
     serializer_class = CommentSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
