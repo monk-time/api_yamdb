@@ -41,7 +41,7 @@ class User(AbstractUser):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ('username',)
 
     @property
     def is_admin_or_super(self):
