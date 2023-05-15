@@ -60,7 +60,7 @@ python manage.py migrate
 Можно заполнить базу тестовыми данными:
 
 ```
-python manage.py bulkupload
+python manage.py load
 ```
 
 Запустить проект:
