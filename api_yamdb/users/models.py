@@ -4,7 +4,8 @@ from django.db import models
 
 from .validators import validate_username_not_me
 
-USER_MAX_LENGTH = 150
+USERNAME_MAX_LENGTH = 150
+EMAIL_MAX_LENGTH = 254
 
 
 class User(AbstractUser):
@@ -19,7 +20,7 @@ class User(AbstractUser):
 
     username = models.CharField(
         'Имя пользователя',
-        max_length=USER_MAX_LENGTH,
+        max_length=USERNAME_MAX_LENGTH,
         unique=True,
         validators=[
             UnicodeUsernameValidator(),
@@ -28,6 +29,7 @@ class User(AbstractUser):
     )
     email = models.EmailField(
         'Адрес электронной почты',
+        max_length=EMAIL_MAX_LENGTH,
         unique=True,
     )
     bio = models.TextField(
