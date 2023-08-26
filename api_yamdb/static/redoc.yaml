@@ -47,6 +47,7 @@ paths:
         Права доступа: **Доступно без токена.**
         Использовать имя 'me' в качестве `username` запрещено.
         Поля `email` и `username` должны быть уникальными.
+        Должна быть возможность повторного запроса кода подтверждения.
       parameters: []
       requestBody:
         content:
@@ -62,7 +63,7 @@ paths:
                   maxLength: 254
                 username:
                   type: string
-                  pattern: ^[\w.@+-]+\z
+                  pattern: ^[\w.@+-]+\Z
                   maxLength: 150
       responses:
         200:
@@ -99,7 +100,7 @@ paths:
               properties:
                 username:
                   type: string
-                  pattern: ^[\w.@+-]+\z
+                  pattern: ^[\w.@+-]+\Z
                   maxLength: 150
                 confirmation_code:
                   type: string
@@ -995,7 +996,7 @@ components:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
-          pattern: ^[\w.@+-]+\z
+          pattern: ^[\w.@+-]+\Z
           maxLength: 150
         email:
           type: string
@@ -1173,7 +1174,7 @@ components:
           type: string
           description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
-          pattern: ^[\w.@+-]+\z
+          pattern: ^[\w.@+-]+\Z
           maxLength: 150
         role:
           enum:
