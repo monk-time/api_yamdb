@@ -20,7 +20,7 @@ from .serializers import (
 
 
 class TitleViewSet(ModelViewSet):
-    """Вьюсет названия произведения"""
+    """Вьюсет названия произведения."""
 
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by(
         'name'
@@ -28,16 +28,16 @@ class TitleViewSet(ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_serializer_class(self):
-        if self.request.method in ('POST', 'PATCH'):
+        if self.request.method in {'POST', 'PATCH'}:
             return TitleWriteSerializer
         return TitleReadSerializer
 
 
 class GenreViewSet(ListCreateDestroyMixin, GenericViewSet):
-    """Вьюсет жанра произведения"""
+    """Вьюсет жанра произведения."""
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -49,7 +49,7 @@ class GenreViewSet(ListCreateDestroyMixin, GenericViewSet):
 
 
 class CategoryViewSet(ListCreateDestroyMixin, GenericViewSet):
-    """Вьюсет категории произведения"""
+    """Вьюсет категории произведения."""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -61,11 +61,11 @@ class CategoryViewSet(ListCreateDestroyMixin, GenericViewSet):
 
 
 class ReviewViewSet(ModelViewSet):
-    """Вьюсет для отзывов"""
+    """Вьюсет для отзывов."""
 
     serializer_class = ReviewSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs['title_id'])
@@ -80,11 +80,11 @@ class ReviewViewSet(ModelViewSet):
 
 
 class CommentViewSet(ModelViewSet):
-    """Вьюсет для комментариев"""
+    """Вьюсет для комментариев."""
 
     serializer_class = CommentSerializer
     permission_classes = (IsStaffOrAuthorOrReadOnly,)
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_review(self):
         return get_object_or_404(

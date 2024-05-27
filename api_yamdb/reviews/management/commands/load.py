@@ -25,13 +25,14 @@ class CSVModel:
 
     def load(self):
         try:
-            with open(BASE_DIR / self.filename, encoding='utf-8') as csvfile:
+            with (BASE_DIR / self.filename).open(encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile)
                 self.model.objects.bulk_create(
                     self.model(**self.mapped(row)) for row in reader
                 )
-        except FileNotFoundError:
-            raise CommandError(f'File {self.filename} not found')
+        except FileNotFoundError as e:
+            msg = f'File {self.filename} not found'
+            raise CommandError(msg) from e
 
 
 CATEGORY_MAPPING = {'category': 'category_id'}

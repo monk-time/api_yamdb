@@ -54,7 +54,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Сериализатор для Отзывов"""
+    """Сериализатор для Отзывов."""
 
     author = serializers.SlugRelatedField(
         read_only=True,
@@ -71,14 +71,15 @@ class ReviewSerializer(serializers.ModelSerializer):
             title_id = self.context['view'].kwargs['title_id']
             title = get_object_or_404(Title, pk=title_id)
             if title.reviews.filter(author=request.user).exists():
-                raise validators.ValidationError(
-                    'Нельзя оставлять отзыв дважды на одно и тоже произвдение'
+                msg = (
+                    'Нельзя оставлять отзыв дважды на одно и тоже произведение'
                 )
+                raise validators.ValidationError(msg)
         return attrs
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    """Сериализатор для Комментариев"""
+    """Сериализатор для Комментариев."""
 
     author = serializers.SlugRelatedField(
         read_only=True,

@@ -2,73 +2,67 @@ from http import HTTPStatus
 
 check_name_and_slug_patterns = (
     (
-        {
-            'name': 'a' * 256 + 'simbols',
-            'slug': 'longname'
-        },
-        ((
-            'Проверьте, что при обработке POST-запроса к `{url}` проверяется '
-            'длина поля `name`: название произведения не '
-            'должно быть длиннее 256 символов.'
-        ),)
+        {'name': 'a' * 256 + 'simbols', 'slug': 'longname'},
+        (
+            (
+                'Проверьте, что при обработке POST-запроса к `{url}` проверяется '
+                'длина поля `name`: название произведения не '
+                'должно быть длиннее 256 символов.'
+            ),
+        ),
     ),
     (
-        {
-            'name': 'longslug',
-            'slug': 'l' * 50 + 'simbols'
-        },
-        ((
-            'Проверьте, что при обработке POST-запроса к `{url}` проверяется '
-            'длина поля `slug`: его содержимое не должно быть длиннее 50 '
-            'символов.'
-        ),)
+        {'name': 'longslug', 'slug': 'l' * 50 + 'simbols'},
+        (
+            (
+                'Проверьте, что при обработке POST-запроса к `{url}` проверяется '
+                'длина поля `slug`: его содержимое не должно быть длиннее 50 '
+                'символов.'
+            ),
+        ),
     ),
     (
-        {
-            'name': 'brokenslug',
-            'slug': ':-)'
-        },
-        ((
-            'Проверьте, что при обработке POST-запроса к `{url}` содержание '
-            'поля `slug` проверяется на соответствие паттерну, указанному в '
-            'спецификации: ^[-a-zA-Z0-9_]+$'
-        ),)
-    )
+        {'name': 'brokenslug', 'slug': ':-)'},
+        (
+            (
+                'Проверьте, что при обработке POST-запроса к `{url}` содержание '
+                'поля `slug` проверяется на соответствие паттерну, указанному в '
+                'спецификации: ^[-a-zA-Z0-9_]+$'
+            ),
+        ),
+    ),
 )
 invalid_data_for_username_and_email_fields = [
     (
-        {
-            'email': ('a' * 244) + '@yamdb.fake',
-            'username': 'valid-username'
-        },
-        ((
-            'Проверьте, что при обработке {request_method}-запроса к `{url}` '
-            'проверяется длина поля `email`: его содержимое не должно быть '
-            'длиннее 254 символа.'
-        ),)
+        {'email': ('a' * 244) + '@yamdb.fake', 'username': 'valid-username'},
+        (
+            (
+                'Проверьте, что при обработке {request_method}-запроса к `{url}` '
+                'проверяется длина поля `email`: его содержимое не должно быть '
+                'длиннее 254 символа.'
+            ),
+        ),
     ),
     (
-        {
-            'email': 'valid-email@yamdb.fake',
-            'username': ('a' * 151)
-        },
-        ((
-            'Проверьте, что при обработке {request_method}-запроса к `{url}` '
-            'проверяется длина поля `username`: его содержимое не должно быть '
-            'длиннее 150 символов.'
-        ),)
+        {'email': 'valid-email@yamdb.fake', 'username': ('a' * 151)},
+        (
+            (
+                'Проверьте, что при обработке {request_method}-запроса к `{url}` '
+                'проверяется длина поля `username`: его содержимое не должно быть '
+                'длиннее 150 символов.'
+            ),
+        ),
     ),
     (
-        {
-            'email': 'valid-email@yamdb.fake',
-            'username': '|-|aTa|_|_|a'
-        },
-        ((
-            'Проверьте, что при обработке {request_method}-запроса к `{url}` '
-            'содержание поля `username` проверяется на соответствие '
-            'паттерну, указанному в спецификации: ^[\\w.@+-]+\\Z'
-        ),)
-    )
+        {'email': 'valid-email@yamdb.fake', 'username': '|-|aTa|_|_|a'},
+        (
+            (
+                'Проверьте, что при обработке {request_method}-запроса к `{url}` '
+                'содержание поля `username` проверяется на соответствие '
+                'паттерну, указанному в спецификации: ^[\\w.@+-]+\\Z'
+            ),
+        ),
+    ),
 ]
 invalid_data_for_user_patch_and_creation = (
     invalid_data_for_username_and_email_fields.copy()
@@ -78,26 +72,30 @@ invalid_data_for_user_patch_and_creation.extend([
         {
             'email': 'valid-email@yamdb.fake',
             'username': 'validname',
-            'first_name': 'toolong' + 'g' * 144
+            'first_name': 'toolong' + 'g' * 144,
         },
-        ((
-            'Проверьте, что при обработке POST-запроса к `{url}` '
-            'проверяется длина поля `first_name`: его содержимое не должно '
-            'быть длиннее 150 символов.'
-        ),)
+        (
+            (
+                'Проверьте, что при обработке POST-запроса к `{url}` '
+                'проверяется длина поля `first_name`: его содержимое не должно '
+                'быть длиннее 150 символов.'
+            ),
+        ),
     ),
     (
         {
             'email': 'valid-email@yamdb.fake',
             'username': 'validname',
-            'last_name': 'toolong' + 'g' * 144
+            'last_name': 'toolong' + 'g' * 144,
         },
-        ((
-            'Проверьте, что при обработке POST-запроса к `{url}` '
-            'проверяется длина поля `last_name`: его содержимое не должно '
-            'быть длиннее 150 символов.'
-        ),)
-    )
+        (
+            (
+                'Проверьте, что при обработке POST-запроса к `{url}` '
+                'проверяется длина поля `last_name`: его содержимое не должно '
+                'быть длиннее 150 символов.'
+            ),
+        ),
+    ),
 ])
 
 
@@ -128,8 +126,7 @@ def check_pagination(url, respons_data, expected_count, post_data=None):
         )
 
 
-def check_permissions(client, url, data, user_role, objects,
-                      expected_status):
+def check_permissions(client, url, data, user_role, objects, expected_status):
     sufix = 'slug' if 'slug' in objects[0] else 'id'
 
     response = client.post(url, data=data)
@@ -151,12 +148,10 @@ def check_permissions(client, url, data, user_role, objects,
 
 def create_single_review(client, title_id, text, score):
     data = {'text': text, 'score': score}
-    response = client.post(
-        f'/api/v1/titles/{title_id}/reviews/', data=data
-    )
+    response = client.post(f'/api/v1/titles/{title_id}/reviews/', data=data)
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос авторизованного пользователя к '
-        '`/api/v1/titles/{title_id}/reviews/` содержит корректные данные - '
+        f'`/api/v1/titles/{title_id}/reviews/` содержит корректные данные - '
         'должен вернуться ответ со статусом 201.'
     )
     return response
@@ -165,31 +160,24 @@ def create_single_review(client, title_id, text, score):
 def create_single_comment(client, title_id, review_id, text):
     data = {'text': text}
     response = client.post(
-        f'/api/v1/titles/{title_id}/reviews/{review_id}/comments/',
-        data=data
+        f'/api/v1/titles/{title_id}/reviews/{review_id}/comments/', data=data
     )
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос авторизованного пользователя к '
-        '`/api/v1/titles/{title_id}/reviews/{review_id}/comments/` содержит '
+        f'`/api/v1/titles/{title_id}/reviews/{review_id}/comments/` содержит '
         'корректные данные - должен вернуться ответ со статусом 201.'
     )
     return response
 
 
 def create_categories(admin_client):
-    data1 = {
-        'name': 'Фильм',
-        'slug': 'films'
-    }
+    data1 = {'name': 'Фильм', 'slug': 'films'}
     response = admin_client.post('/api/v1/categories/', data=data1)
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос администратора к `/api/v1/categories/` '
         'содержит корректные данные - должен вернуться ответ со статусом 201.'
     )
-    data2 = {
-        'name': 'Книги',
-        'slug': 'books'
-    }
+    data2 = {'name': 'Книги', 'slug': 'books'}
     admin_client.post('/api/v1/categories/', data=data2)
     return [data1, data2]
 
@@ -221,7 +209,7 @@ def create_titles(admin_client):
         'year': 1984,
         'genre': [genres[0]['slug'], genres[1]['slug']],
         'category': categories[0]['slug'],
-        'description': 'I`ll be back'
+        'description': 'I`ll be back',
     }
     response = admin_client.post('/api/v1/titles/', data=data)
     assert response.status_code == HTTPStatus.CREATED, (
@@ -235,7 +223,7 @@ def create_titles(admin_client):
         'year': 1988,
         'genre': [genres[2]['slug']],
         'category': categories[1]['slug'],
-        'description': 'Yippie ki yay...'
+        'description': 'Yippie ki yay...',
     }
     response = admin_client.post('/api/v1/titles/', data=data)
     data['id'] = response.json()['id']
@@ -251,14 +239,12 @@ def create_reviews(admin_client, authors_map):
         response = create_single_review(
             user_client, titles[0]['id'], text.format(idx), 5
         )
-        result.append(
-            {
-                'id': response.json()['id'],
-                'author': user.username,
-                'text': text.format(idx),
-                'score': 5
-            }
-        )
+        result.append({
+            'id': response.json()['id'],
+            'author': user.username,
+            'text': text.format(idx),
+            'score': 5,
+        })
     return result, titles
 
 
@@ -270,21 +256,16 @@ def create_comments(admin_client, authors_map):
         response = create_single_comment(
             user_client, titles[0]['id'], reviews[0]['id'], text.format(idx)
         )
-        result.append(
-            {
-                'id': response.json()['id'],
-                'author': user.username,
-                'text': text.format(idx),
-            }
-        )
+        result.append({
+            'id': response.json()['id'],
+            'author': user.username,
+            'text': text.format(idx),
+        })
     return result, reviews, titles
 
 
-def check_fields(obj_type, url_pattern, obj, expected_data, detail=False):
-    obj_types = {
-        'comment': 'комментария(ев) к отзыву',
-        'review': 'отзыва(ов)'
-    }
+def check_fields(obj_type, url_pattern, obj, expected_data, *, detail=False):
+    obj_types = {'comment': 'комментария(ев) к отзыву', 'review': 'отзыва(ов)'}
     results_in_msg = ' в ключе `results`'
     if detail:
         results_in_msg = ''
