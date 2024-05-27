@@ -3,14 +3,16 @@ from http import HTTPStatus
 import pytest
 
 from tests.utils import (
-    check_pagination, check_permissions, create_categories, create_genre,
-    create_titles
+    check_pagination,
+    check_permissions,
+    create_categories,
+    create_genre,
+    create_titles,
 )
 
 
 @pytest.mark.django_db(transaction=True)
 class Test04TitleAPI:
-
     TITLES_URL = '/api/v1/titles/'
     TITLES_DETAIL_URL_TEMPLATE = '/api/v1/titles/{title_id}/'
 
@@ -25,7 +27,7 @@ class Test04TitleAPI:
             f'`{self.TITLES_URL}` возвращает ответ со статусом 200.'
         )
 
-    def test_02_title_admin(self, admin_client, client):
+    def test_02_title_admin(self, admin_client, client):  # noqa: PLR0915
         genres = create_genre(admin_client)
         categories = create_categories(admin_client)
         title_count = 0
@@ -44,7 +46,7 @@ class Test04TitleAPI:
             'year': 'дветыщи',
             'genre': [genres[1]['slug']],
             'category': categories[1]['slug'],
-            'description': 'Угонял машины всю ночь и немного подустал.'
+            'description': 'Угонял машины всю ночь и немного подустал.',
         }
         response = admin_client.post(self.TITLES_URL, data=invalid_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, assert_msg
@@ -54,7 +56,7 @@ class Test04TitleAPI:
             'year': 1957,
             'genre': [genres[0]['slug'], genres[1]['slug']],
             'category': categories[0]['slug'],
-            'description': 'Рон Свонсон рекомендует.'
+            'description': 'Рон Свонсон рекомендует.',
         }
         response = admin_client.post(self.TITLES_URL, data=post_data_1)
         assert response.status_code == HTTPStatus.CREATED, (
@@ -69,7 +71,7 @@ class Test04TitleAPI:
             'year': 1966,
             'genre': [genres[2]['slug']],
             'category': categories[1]['slug'],
-            'description': 'Угадай ревьюера по названию фильма.'
+            'description': 'Угадай ревьюера по названию фильма.',
         }
         response = admin_client.post(self.TITLES_URL, data=post_data_2)
         assert response.status_code == HTTPStatus.CREATED, (
@@ -119,12 +121,14 @@ class Test04TitleAPI:
         )
 
         title_genres = title.get('genre', [])
-        assert genres[0] in title_genres and genres[1] in title_genres, (
+        msg = (
             'Проверьте, что при GET-запросе неавторизованного пользователя к '
             f'`{self.TITLES_URL}` в ответе содержится список жанров для '
             'каждого произведения. Сейчас поле `genres` для элементов списка '
             '`results` отсутствует или содержит некорректное значение.'
         )
+        assert genres[0] in title_genres, msg
+        assert genres[1] in title_genres, msg
         assert title.get('year') == post_data_1['year'], (
             'Проверьте, что при GET-запросе неавторизованного пользователя к '
             f'`{self.TITLES_URL}` в ответе содержится год выхода '
@@ -150,12 +154,12 @@ class Test04TitleAPI:
             'year': 1997,
             'genre': [genres[1]['slug']],
             'category': categories[1]['slug'],
-            'description': 'Дверь выдержала бы и двоих...'
+            'description': 'Дверь выдержала бы и двоих...',
         }
         admin_client.post(self.TITLES_URL, data=data)
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?genre={genres[1]["slug"]}'
+            f'{self.TITLES_URL}?genre={genres[1]['slug']}'
         )
         data = response.json()
         assert len(data['results']) == 2, (
@@ -165,7 +169,7 @@ class Test04TitleAPI:
         )
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?category={categories[0]["slug"]}'
+            f'{self.TITLES_URL}?category={categories[0]['slug']}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -175,7 +179,7 @@ class Test04TitleAPI:
         )
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?year={post_data_1["year"]}'
+            f'{self.TITLES_URL}?year={post_data_1['year']}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -184,7 +188,7 @@ class Test04TitleAPI:
             'выхода произведения.'
         )
         response = admin_client.get(
-            f'{self.TITLES_URL}?name={post_data_1["name"]}'
+            f'{self.TITLES_URL}?name={post_data_1['name']}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -226,11 +230,11 @@ class Test04TitleAPI:
 
         update_data = {
             'name': 'Новое название',
-            'category': categories[1]['slug']
+            'category': categories[1]['slug'],
         }
         response = admin_client.patch(
             self.TITLES_DETAIL_URL_TEMPLATE.format(title_id=titles[0]['id']),
-            data=update_data
+            data=update_data,
         )
         assert response.status_code == HTTPStatus.OK, (
             'Проверьте, что PATCH-запрос администратора к '
@@ -284,7 +288,7 @@ class Test04TitleAPI:
             'year': 1989,
             'genre': [genres[0]['slug'], genres[1]['slug']],
             'category': categories[0]['slug'],
-            'description': 'Dragon Ball Z'
+            'description': 'Dragon Ball Z',
         }
         response = admin_client.post(self.TITLES_URL, data=data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
@@ -298,7 +302,7 @@ class Test04TitleAPI:
             'year': 1957,
             'genre': [genres[0]['slug'], genres[1]['slug']],
             'category': categories[0]['slug'],
-            'description': 'Рон Свонсон рекомендует.'
+            'description': 'Рон Свонсон рекомендует.',
         }
         response = admin_client.post(self.TITLES_URL, data=data)
         assert response.status_code == HTTPStatus.CREATED, (
@@ -314,7 +318,7 @@ class Test04TitleAPI:
 
         response = admin_client.patch(
             self.TITLES_DETAIL_URL_TEMPLATE.format(title_id=idx),
-            data={'name': ('longname' + 'e' * 249)}
+            data={'name': ('longname' + 'e' * 249)},
         )
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Проверьте, что при обработке PATCH-запрос администратора к '
@@ -322,24 +326,41 @@ class Test04TitleAPI:
             '`name`: название произведения не может быть длиннее 256 символов.'
         )
 
-    def test_05_titles_check_permission(self, client, user_client,
-                                        moderator_client, admin_client):
+    def test_05_titles_check_permission(
+        self, client, user_client, moderator_client, admin_client
+    ):
         titles, categories, genres = create_titles(admin_client)
         data = {
             'name': 'Зловещие мертвецы',
             'year': 1981,
             'genre': [genres[2]['slug'], genres[1]['slug']],
             'category': categories[0]['slug'],
-            'description': 'This Is My Boomstick! - Ash'
+            'description': 'This Is My Boomstick! - Ash',
         }
-        check_permissions(client, self.TITLES_URL, data,
-                          'неавторизованного пользователя', titles,
-                          HTTPStatus.UNAUTHORIZED)
-        check_permissions(user_client, self.TITLES_URL, data,
-                          'пользователя с ролью `user`', titles,
-                          HTTPStatus.FORBIDDEN)
-        check_permissions(moderator_client, self.TITLES_URL, data,
-                          'модератора', titles, HTTPStatus.FORBIDDEN)
+        check_permissions(
+            client,
+            self.TITLES_URL,
+            data,
+            'неавторизованного пользователя',
+            titles,
+            HTTPStatus.UNAUTHORIZED,
+        )
+        check_permissions(
+            user_client,
+            self.TITLES_URL,
+            data,
+            'пользователя с ролью `user`',
+            titles,
+            HTTPStatus.FORBIDDEN,
+        )
+        check_permissions(
+            moderator_client,
+            self.TITLES_URL,
+            data,
+            'модератора',
+            titles,
+            HTTPStatus.FORBIDDEN,
+        )
 
     def test_06_titles_detail_put_not_allowed(self, admin_client, user):
         titles, _, _ = create_titles(admin_client)
@@ -347,7 +368,7 @@ class Test04TitleAPI:
         title['name'] = 'Новое название произведения.'
         response = admin_client.put(
             self.TITLES_DETAIL_URL_TEMPLATE.format(title_id=title['id']),
-            data=title
+            data=title,
         )
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED, (
             f'Проверьте, что PUT-запрос к `{self.TITLES_DETAIL_URL_TEMPLATE} '

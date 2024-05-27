@@ -6,7 +6,7 @@ from django.db.utils import IntegrityError
 
 from tests.utils import (
     invalid_data_for_user_patch_and_creation,
-    invalid_data_for_username_and_email_fields
+    invalid_data_for_username_and_email_fields,
 )
 
 
@@ -30,19 +30,17 @@ class Test00UserRegistration:
         )
         response_json = response.json()
         empty_fields = ['email', 'username']
+        msg = (
+            f'Если в POST-запросе к `{self.URL_SIGNUP}` не переданы '
+            'необходимые данные, в ответе должна возвращаться информация '
+            'об обязательных для заполнения полях.'
+        )
         for field in empty_fields:
-            assert (field in response_json
-                    and isinstance(response_json.get(field), list)), (
-                f'Если в POST-запросе к `{self.URL_SIGNUP}` не переданы '
-                'необходимые данные, в ответе должна возвращаться информация '
-                'об обязательных для заполнения полях.'
-            )
+            assert field in response_json, msg
+            assert isinstance(response_json.get(field), list), msg
 
     def test_00_invalid_data_signup(self, client, django_user_model):
-        invalid_data = {
-            'email': 'invalid_email',
-            'username': ' '
-        }
+        invalid_data = {'email': 'invalid_email', 'username': ' '}
         users_count = django_user_model.objects.count()
 
         response = client.post(self.URL_SIGNUP, data=invalid_data)
@@ -62,13 +60,14 @@ class Test00UserRegistration:
 
         response_json = response.json()
         invalid_fields = ['email', 'username']
+        msg = (
+            f'Если в  POST-запросе к `{self.URL_SIGNUP}` переданы '
+            'некорректные данные, в ответе должна возвращаться информация '
+            'о неправильно заполненных полях.'
+        )
         for field in invalid_fields:
-            assert (field in response_json
-                    and isinstance(response_json.get(field), list)), (
-                f'Если в  POST-запросе к `{self.URL_SIGNUP}` переданы '
-                'некорректные данные, в ответе должна возвращаться информация '
-                'о неправильно заполненных полях.'
-            )
+            assert field in response_json, msg
+            assert isinstance(response_json.get(field), list), msg
 
         valid_email = 'validemail@yamdb.fake'
         invalid_data = {
@@ -85,19 +84,17 @@ class Test00UserRegistration:
         )
 
     @pytest.mark.parametrize(
-        'data,messege', invalid_data_for_username_and_email_fields
+        'data,message', invalid_data_for_username_and_email_fields
     )
-    def test_00_singup_length_and_simbols_validation(self, client,
-                                                     data, messege,
-                                                     django_user_model):
+    def test_00_singup_length_and_simbols_validation(
+        self, client, data, message, django_user_model
+    ):
         request_method = 'POST'
         users_count = django_user_model.objects.count()
         response = client.post(self.URL_SIGNUP, data=data)
-        assert response.status_code == HTTPStatus.BAD_REQUEST, (
-            messege[0].format(
-                url=self.URL_SIGNUP, request_method=request_method
-            )
-        )
+        assert response.status_code == HTTPStatus.BAD_REQUEST, message[
+            0
+        ].format(url=self.URL_SIGNUP, request_method=request_method)
         assert django_user_model.objects.count() == users_count, (
             f'Если в POST-запросе к эндпоинту `{self.URL_SIGNUP}` '
             'значения полей не соответствуют ограничениям по длине или '
@@ -108,7 +105,7 @@ class Test00UserRegistration:
         outbox_before_count = len(mail.outbox)
         valid_data = {
             'email': 'valid@yamdb.fake',
-            'username': 'valid_username'
+            'username': 'valid_username',
         }
 
         response = client.post(self.URL_SIGNUP, data=valid_data)
@@ -150,13 +147,13 @@ class Test00UserRegistration:
 
         new_user.delete()
 
-    def test_00_valid_data_admin_create_user(self,
-                                             admin_client,
-                                             django_user_model):
+    def test_00_valid_data_admin_create_user(
+        self, admin_client, django_user_model
+    ):
         outbox_before_count = len(mail.outbox)
         valid_data = {
             'email': 'valid@yamdb.fake',
-            'username': 'valid_username'
+            'username': 'valid_username',
         }
         response = admin_client.post(
             self.URL_ADMIN_CREATE_USER, data=valid_data
@@ -174,14 +171,15 @@ class Test00UserRegistration:
             'должен вернуться ответ со статусом 201.'
         )
         response_json = response.json()
+        msg = (
+            'Если POST-запрос от имени администратора к эндпоинту  '
+            f'`{self.URL_ADMIN_CREATE_USER}` содержит корректные данные - '
+            'в ответе должна быть информация об '
+            f'{', '.join(valid_data)} нового пользователя.'
+        )
         for field in valid_data:
-            assert (field in response_json
-                    and valid_data.get(field) == response_json.get(field)), (
-                'Если POST-запрос от имени администратора к эндпоинту  '
-                f'`{self.URL_ADMIN_CREATE_USER}` содержит корректные данные - '
-                'в ответе должна быть информация об '
-                f'{", ".join(valid_data)} нового пользователя.'
-            )
+            assert field in response_json, msg
+            assert valid_data.get(field) == response_json.get(field), msg
 
         new_user = django_user_model.objects.filter(email=valid_data['email'])
         assert new_user.exists(), (
@@ -203,16 +201,14 @@ class Test00UserRegistration:
         'data,messege', invalid_data_for_user_patch_and_creation
     )
     def test_00_admin_create_user_length_and_simbols_validation(
-            self, admin_client, data, messege, django_user_model
+        self, admin_client, data, messege, django_user_model
     ):
         request_method = 'POST'
         users_count = django_user_model.objects.count()
         response = admin_client.post(self.URL_ADMIN_CREATE_USER, data=data)
-        assert response.status_code == HTTPStatus.BAD_REQUEST, (
-            messege[0].format(
-                url=self.URL_ADMIN_CREATE_USER, request_method=request_method
-            )
-        )
+        assert response.status_code == HTTPStatus.BAD_REQUEST, messege[
+            0
+        ].format(url=self.URL_ADMIN_CREATE_USER, request_method=request_method)
         assert django_user_model.objects.count() == users_count, (
             'Если значения полей в POST-запросе, отправленном на эндпоинт '
             f'`{self.URL_ADMIN_CREATE_USER}`, не соответствуют ограничениям '
@@ -232,9 +228,7 @@ class Test00UserRegistration:
             f'`{self.URL_TOKEN}`, возвращает ответ со статусом 400.'
         )
 
-        invalid_data = {
-            'confirmation_code': 12345
-        }
+        invalid_data = {'confirmation_code': 12345}
         response = client.post(self.URL_TOKEN, data=invalid_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Проверьте, что POST-запрос, отправленный на эндпоинт '
@@ -244,7 +238,7 @@ class Test00UserRegistration:
 
         invalid_data = {
             'username': 'unexisting_user',
-            'confirmation_code': 12345
+            'confirmation_code': 12345,
         }
         response = client.post(self.URL_TOKEN, data=invalid_data)
         assert response.status_code == HTTPStatus.NOT_FOUND, (
@@ -255,7 +249,7 @@ class Test00UserRegistration:
 
         valid_data = {
             'email': 'valid@yamdb.fake',
-            'username': 'valid_username'
+            'username': 'valid_username',
         }
         response = client.post(self.URL_SIGNUP, data=valid_data)
         assert response.status_code == HTTPStatus.OK, (
@@ -265,7 +259,7 @@ class Test00UserRegistration:
 
         invalid_data = {
             'username': valid_data['username'],
-            'confirmation_code': 12345
+            'confirmation_code': 12345,
         }
         response = client.post(self.URL_TOKEN, data=invalid_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
@@ -275,10 +269,7 @@ class Test00UserRegistration:
         )
 
     def test_00_registration_me_username_restricted(self, client):
-        valid_data = {
-            'email': 'valid@yamdb.fake',
-            'username': 'me'
-        }
+        valid_data = {'email': 'valid@yamdb.fake', 'username': 'me'}
         response = client.post(self.URL_SIGNUP, data=valid_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если в POST-запросе, отправленном на эндпоинт '
@@ -292,10 +283,7 @@ class Test00UserRegistration:
         valid_username_1 = 'valid_username_1'
         valid_username_2 = 'valid_username_2'
 
-        valid_data = {
-            'email': valid_email_1,
-            'username': valid_username_1
-        }
+        valid_data = {'email': valid_email_1, 'username': valid_username_1}
         response = client.post(self.URL_SIGNUP, data=valid_data)
         assert response.status_code == HTTPStatus.OK, (
             f'Проверьте, что POST-запрос к `{self.URL_SIGNUP}` с корректными '
@@ -304,7 +292,7 @@ class Test00UserRegistration:
 
         duplicate_email_data = {
             'email': valid_email_1,
-            'username': valid_username_2
+            'username': valid_username_2,
         }
         assert_msg = (
             f'Если POST-запрос, отправленный на эндпоинт `{self.URL_SIGNUP}`, '
@@ -313,13 +301,13 @@ class Test00UserRegistration:
         )
         try:
             response = client.post(self.URL_SIGNUP, data=duplicate_email_data)
-        except IntegrityError:
-            raise AssertionError(assert_msg)
-        assert response.status_code == HTTPStatus.BAD_REQUEST, (assert_msg)
+        except IntegrityError as error:
+            raise AssertionError(assert_msg) from error
+        assert response.status_code == HTTPStatus.BAD_REQUEST, assert_msg
 
         duplicate_username_data = {
             'email': valid_email_2,
-            'username': valid_username_1
+            'username': valid_username_1,
         }
         assert_msg = (
             f'Если POST-запрос, отправленный на эндпоинт `{self.URL_SIGNUP}`, '
@@ -331,14 +319,14 @@ class Test00UserRegistration:
             response = client.post(
                 self.URL_SIGNUP, data=duplicate_username_data
             )
-        except IntegrityError:
-            raise AssertionError(assert_msg)
-        assert response.status_code == HTTPStatus.BAD_REQUEST, (assert_msg)
+        except IntegrityError as error:
+            raise AssertionError(assert_msg) from error
+        assert response.status_code == HTTPStatus.BAD_REQUEST, assert_msg
 
     def test_get_new_confirmation_code_for_existing_user(self, client):
         valid_data = {
             'email': 'test_email@yamdb.fake',
-            'username': 'valid_username_1'
+            'username': 'valid_username_1',
         }
         response = client.post(self.URL_SIGNUP, data=valid_data)
         assert response.status_code == HTTPStatus.OK, (
@@ -355,12 +343,12 @@ class Test00UserRegistration:
         )
 
     def test_get_confirmation_code_for_user_created_by_admin(
-            self, admin_client, client, django_user_model
+        self, admin_client, client, django_user_model
     ):
         user_cnt = django_user_model.objects.count()
         valid_data = {
             'email': 'test_email@yamdb.fake',
-            'username': 'valid_username_1'
+            'username': 'valid_username_1',
         }
         admin_client.post(self.URL_ADMIN_CREATE_USER, data=valid_data)
         assert (user_cnt + 1) == django_user_model.objects.count(), (

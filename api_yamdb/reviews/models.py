@@ -14,7 +14,7 @@ STR_LENGTH = 15
 
 
 class Genre(models.Model):
-    """Модель жанра произведения"""
+    """Модель жанра произведения."""
 
     name = models.CharField(max_length=GENRE_MAX_LENGTH, verbose_name='Жанр')
     slug = models.SlugField(unique=True)
@@ -29,7 +29,7 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
-    """Модель категории произведения"""
+    """Модель категории произведения."""
 
     name = models.CharField(
         max_length=CATEGORY_MAX_LENGTH,
@@ -47,7 +47,7 @@ class Category(models.Model):
 
 
 class Title(models.Model):
-    """Модель произведения"""
+    """Модель произведения."""
 
     name = models.CharField(
         max_length=TITLE_MAX_LENGTH, verbose_name='Название'
@@ -95,7 +95,7 @@ class AbstractPost(models.Model):
 
 
 class Review(AbstractPost):
-    """Модель Отзывов на произведения"""
+    """Модель Отзывов на произведения."""
 
     title = models.ForeignKey(
         Title,
@@ -115,19 +115,19 @@ class Review(AbstractPost):
         ordering = ('-pub_date',)
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
                 name='unique_author_title',
                 fields=['author', 'title'],
             ),
-        ]
+        )
 
     def __str__(self):
         return self.text[:STR_LENGTH]
 
 
 class Comment(AbstractPost):
-    """Модель Комментариев к отзывам"""
+    """Модель Комментариев к отзывам."""
 
     review = models.ForeignKey(
         Review,

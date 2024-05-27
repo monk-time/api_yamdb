@@ -3,14 +3,15 @@ from http import HTTPStatus
 import pytest
 
 from tests.utils import (
-    check_name_and_slug_patterns, check_pagination, check_permissions,
-    create_categories
+    check_name_and_slug_patterns,
+    check_pagination,
+    check_permissions,
+    create_categories,
 )
 
 
 @pytest.mark.django_db(transaction=True)
 class Test02CategoryAPI:
-
     CATEGORY_URL = '/api/v1/categories/'
     CATEGORY_SLUG_TEMPLATE_URL = '/api/v1/categories/{slug}/'
 
@@ -36,10 +37,7 @@ class Test02CategoryAPI:
             'вернуться ответ со статусом 400.'
         )
 
-        data = {
-            'name': 'Фильм',
-            'slug': 'films'
-        }
+        data = {'name': 'Фильм', 'slug': 'films'}
         response = admin_client.post(self.CATEGORY_URL, data=data)
         assert response.status_code == HTTPStatus.CREATED, (
             'Если POST-запрос администратора, отправленный к '
@@ -48,10 +46,7 @@ class Test02CategoryAPI:
         )
         categories_count += 1
 
-        data = {
-            'name': 'Новые фильмы',
-            'slug': 'films'
-        }
+        data = {'name': 'Новые фильмы', 'slug': 'films'}
         response = admin_client.post(self.CATEGORY_URL, data=data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             f'Если в POST-запросе администратора к `{self.CATEGORY_URL}` '
@@ -59,10 +54,7 @@ class Test02CategoryAPI:
             'статусом 400.'
         )
 
-        post_data = {
-            'name': 'Книги',
-            'slug': 'books'
-        }
+        post_data = {'name': 'Книги', 'slug': 'books'}
         response = admin_client.post(self.CATEGORY_URL, data=post_data)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{self.CATEGORY_URL}` '
@@ -80,7 +72,7 @@ class Test02CategoryAPI:
         check_pagination(self.CATEGORY_URL, data, categories_count, post_data)
 
         response = admin_client.get(
-            f'{self.CATEGORY_URL}?search={post_data["name"]}'
+            f'{self.CATEGORY_URL}?search={post_data['name']}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -92,16 +84,14 @@ class Test02CategoryAPI:
     @pytest.mark.parametrize('data,massage', check_name_and_slug_patterns)
     def test_03_category_fields_validation(self, data, massage, admin_client):
         response = admin_client.post(self.CATEGORY_URL, data=data)
-        assert response.status_code == HTTPStatus.BAD_REQUEST, (
-            massage[0].format(url=self.CATEGORY_URL)
-        )
+        assert response.status_code == HTTPStatus.BAD_REQUEST, massage[
+            0
+        ].format(url=self.CATEGORY_URL)
 
     def test_04_category_delete_admin(self, admin_client):
         category_1, category_2 = create_categories(admin_client)
         response = admin_client.delete(
-            self.CATEGORY_SLUG_TEMPLATE_URL.format(
-                slug=category_1['slug']
-            )
+            self.CATEGORY_SLUG_TEMPLATE_URL.format(slug=category_1['slug'])
         )
         assert response.status_code == HTTPStatus.NO_CONTENT, (
             'Проверьте, что DELETE-запрос администратора к '
@@ -116,9 +106,7 @@ class Test02CategoryAPI:
         )
 
         response = admin_client.get(
-            self.CATEGORY_SLUG_TEMPLATE_URL.format(
-                slug=category_2['slug']
-            )
+            self.CATEGORY_SLUG_TEMPLATE_URL.format(slug=category_2['slug'])
         )
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED, (
             'Проверьте, что GET-запросы к '
@@ -126,9 +114,7 @@ class Test02CategoryAPI:
             'ответ со статусом 405.'
         )
         response = admin_client.patch(
-            self.CATEGORY_SLUG_TEMPLATE_URL.format(
-                slug=category_2['slug']
-            )
+            self.CATEGORY_SLUG_TEMPLATE_URL.format(slug=category_2['slug'])
         )
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED, (
             'Проверьте, что PATCH-запросы к '
@@ -136,20 +122,32 @@ class Test02CategoryAPI:
             'ответ со статусом 405.'
         )
 
-    def test_05_category_check_permission_admin(self, client,
-                                                user_client,
-                                                moderator_client,
-                                                admin_client):
+    def test_05_category_check_permission_admin(
+        self, client, user_client, moderator_client, admin_client
+    ):
         categories = create_categories(admin_client)
-        data = {
-            'name': 'Музыка',
-            'slug': 'music'
-        }
-        check_permissions(client, self.CATEGORY_URL, data,
-                          'неавторизованного пользователя',
-                          categories, HTTPStatus.UNAUTHORIZED)
-        check_permissions(user_client, self.CATEGORY_URL, data,
-                          'пользователя с ролью `user`', categories,
-                          HTTPStatus.FORBIDDEN)
-        check_permissions(moderator_client, self.CATEGORY_URL, data,
-                          'модератора', categories, HTTPStatus.FORBIDDEN)
+        data = {'name': 'Музыка', 'slug': 'music'}
+        check_permissions(
+            client,
+            self.CATEGORY_URL,
+            data,
+            'неавторизованного пользователя',
+            categories,
+            HTTPStatus.UNAUTHORIZED,
+        )
+        check_permissions(
+            user_client,
+            self.CATEGORY_URL,
+            data,
+            'пользователя с ролью `user`',
+            categories,
+            HTTPStatus.FORBIDDEN,
+        )
+        check_permissions(
+            moderator_client,
+            self.CATEGORY_URL,
+            data,
+            'модератора',
+            categories,
+            HTTPStatus.FORBIDDEN,
+        )

@@ -12,7 +12,7 @@
 Полная документация к API находится в файле `api_yamdb/static/redoc.yaml` и по эндпоинту `/redoc/`.
 
 ### Используемые технологии
-- Python 3.9
+- Python 3.12
 - Django
 - DRF
 - djangorestframework-simplejwt

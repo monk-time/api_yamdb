@@ -1,10 +1,67 @@
-[tool.black]
-line-length = 79
-skip-string-normalization = true
-extend-exclude = 'tests|migrations'
+[tool.pytest.ini_options]
+pythonpath = ['api_yamdb']
+DJANGO_SETTINGS_MODULE = 'api_yamdb.settings'
+addopts = '-vv -p no:cacheprovider'
+testpaths = ['tests/']
+python_files = ['test_*.py']
+disable_test_id_escaping_and_forfeit_all_rights_to_community_support = true
 
-[tool.isort]
-profile = "black"
-line_length = 79
-src_paths = ["api_yamdb"]
-extend_skip = ["tests", "migrations"]
+[tool.ruff]
+target-version = "py312"
+line-length = 79
+preview = true
+output-format = "concise" # preview mode switches this to full
+exclude = ["migrations"]
+src = ["api_yamdb"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D1",      # pydocstyle                  (allow missing docstrings)
+    "ANN",     # flake8-annotations          (demands type annotations)
+    "S",       # flake8-bandit               (security testing)
+    "COM",     # flake8-commas               (conflicts with formatter)
+    "CPY",     # flake8-copyright            (demands copyright notices)
+    "Q",       # flake8-quotes               (conflicts with formatter)
+    "T20",     # flake8-print                (prohibits print statements)
+    "ISC001",  # single-line-implicit-string-concatenation (conflicts with formatter)
+    "PGH003",  # blanket-type-ignore         (PyLance doesn't provide error codes)
+    "B905",    # zip-without-explicit-strict (makes zip too bulky)
+    "E731",    # lambda-assignment           (precludes a concise functional style)
+    "PLC0415", # import-outside-top-level    (sometimes imports in a function are necessary)
+    "PLR2004", # magic-value-comparison      (demands too many constants)
+    "TD003",   # missing-todo-link           (too cumbersome)
+    "G004",    # logging-f-string            (pointless micro-optimization in most cases)
+    "PLR6301", # no-self-use                 (django: method overrides often don't use self)
+    "ARG002",  # unused-method-argument      (django: method overrides often have unused arguments)
+    "TID252",  # relative-imports            (django: apps are more portable with relative imports)
+]
+allowed-confusables = [
+    "а", "б", "в", "г", "е", "з", "и", "к", "м", "н", "о", "р", "с", "у", "ф", "х",
+    "А", "Б", "В", "Г", "Е", "З", "И", "К", "М", "Н", "О", "Р", "С", "У", "Ф", "Х",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "N802",    # invalid-function-name       (common in test methods)
+    "PLR6301", # no-self-use                 (common in test methods)
+    "ARG002",  # unused-method-argument      (common with fixtures)
+    "BLE001",  # blind-except                (common in tests)
+    "PLR0913", # too-many-arguments          (common with fixtures)
+    "PLR0917", # too-many-positional         (common with fixtures)
+    "RUF012",  # mutable-class-default       (common in test classes)
+]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 100 # don't report (E501) lines of length 80..100 that cannot be split by autoformatter
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+parametrize-names-type = "csv"
+parametrize-values-type = "tuple"
+
+[tool.ruff.format]
+quote-style = "single"

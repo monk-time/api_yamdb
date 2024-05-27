@@ -4,7 +4,8 @@ from django.utils import timezone
 
 def validate_year(year):
     if year > timezone.now().year:
-        raise ValidationError(
+        msg = (
             'Некорретный год публикации произведения.'
             f'{year} больше текущего года'
         )
+        raise ValidationError(msg)
