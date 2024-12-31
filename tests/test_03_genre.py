@@ -71,7 +71,7 @@ class Test03GenreAPI:
         check_pagination(self.GENRES_URL, data, genres_count, post_data)
 
         response = admin_client.get(
-            f'{self.GENRES_URL}?search={post_data['name']}'
+            f'{self.GENRES_URL}?search={post_data["name"]}'
         )
         data = response.json()
         assert len(data['results']) == 1, (

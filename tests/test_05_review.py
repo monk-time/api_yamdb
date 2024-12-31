@@ -318,15 +318,15 @@ class Test05ReviewAPI:
             'к его собственному отзыву через `{url_template}` содержится поле '
             '`{field}` - то это поле отзыва будет изменено.'
         )
-        assert (
-            data.get('text') == new_data['text']
-        ), assert_msg_template.format(
-            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='text'
+        assert data.get('text') == new_data['text'], (
+            assert_msg_template.format(
+                url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='text'
+            )
         )
-        assert (
-            data.get('score') == new_data['score']
-        ), assert_msg_template.format(
-            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='score'
+        assert data.get('score') == new_data['score'], (
+            assert_msg_template.format(
+                url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='score'
+            )
         )
 
         moderator_review_url = self.REVIEW_DETAIL_URL_TEMPLATE.format(

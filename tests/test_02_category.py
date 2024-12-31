@@ -72,7 +72,7 @@ class Test02CategoryAPI:
         check_pagination(self.CATEGORY_URL, data, categories_count, post_data)
 
         response = admin_client.get(
-            f'{self.CATEGORY_URL}?search={post_data['name']}'
+            f'{self.CATEGORY_URL}?search={post_data["name"]}'
         )
         data = response.json()
         assert len(data['results']) == 1, (

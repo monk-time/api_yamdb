@@ -59,7 +59,7 @@ def token_user_superuser(user_superuser):
 def user_superuser_client(token_user_superuser):
     client = APIClient()
     client.credentials(
-        HTTP_AUTHORIZATION=f'Bearer {token_user_superuser['access']}'
+        HTTP_AUTHORIZATION=f'Bearer {token_user_superuser["access"]}'
     )
     return client
 
@@ -75,7 +75,7 @@ def token_admin(admin):
 @pytest.fixture
 def admin_client(token_admin):
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {token_admin['access']}')
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {token_admin["access"]}')
     return client
 
 
@@ -91,7 +91,7 @@ def token_moderator(moderator):
 def moderator_client(token_moderator):
     client = APIClient()
     client.credentials(
-        HTTP_AUTHORIZATION=f'Bearer {token_moderator['access']}'
+        HTTP_AUTHORIZATION=f'Bearer {token_moderator["access"]}'
     )
     return client
 
@@ -107,5 +107,5 @@ def token_user(user):
 @pytest.fixture
 def user_client(token_user):
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {token_user['access']}')
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {token_user["access"]}')
     return client

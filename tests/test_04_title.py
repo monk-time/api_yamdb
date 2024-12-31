@@ -159,7 +159,7 @@ class Test04TitleAPI:
         admin_client.post(self.TITLES_URL, data=data)
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?genre={genres[1]['slug']}'
+            f'{self.TITLES_URL}?genre={genres[1]["slug"]}'
         )
         data = response.json()
         assert len(data['results']) == 2, (
@@ -169,7 +169,7 @@ class Test04TitleAPI:
         )
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?category={categories[0]['slug']}'
+            f'{self.TITLES_URL}?category={categories[0]["slug"]}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -179,7 +179,7 @@ class Test04TitleAPI:
         )
 
         response = admin_client.get(
-            f'{self.TITLES_URL}?year={post_data_1['year']}'
+            f'{self.TITLES_URL}?year={post_data_1["year"]}'
         )
         data = response.json()
         assert len(data['results']) == 1, (
@@ -188,7 +188,7 @@ class Test04TitleAPI:
             'выхода произведения.'
         )
         response = admin_client.get(
-            f'{self.TITLES_URL}?name={post_data_1['name']}'
+            f'{self.TITLES_URL}?name={post_data_1["name"]}'
         )
         data = response.json()
         assert len(data['results']) == 1, (

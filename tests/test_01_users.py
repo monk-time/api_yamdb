@@ -130,7 +130,7 @@ class Test01UserAPI:
             f'Проверьте, что ответ на GET-запрос к `{self.USERS_URL}'
             '?search={username}` содержит полный перечень данных '
             'пользователя. Ответ должен содержать следующие ключи с '
-            f'корректными данными: {', '.join(admin_as_dict.keys())}.'
+            f'корректными данными: {", ".join(admin_as_dict.keys())}.'
         )
 
     def test_04_01_users_get_admin_only(self, user_client, moderator_client):
@@ -333,8 +333,8 @@ class Test01UserAPI:
             'ответ со статусом 200.'
         )
         user = django_user_model.objects.get(username=user.username)
-        for key in data:
-            assert getattr(user, key) == data[key], (
+        for key, value in data.items():
+            assert getattr(user, key) == value, (
                 'Проверьте, что PATCH-запрос администратора к '
                 f'`{self.USERS_URL}'
                 '{username}/` может изменять данные другого пользователя.'

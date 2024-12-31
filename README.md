@@ -12,62 +12,46 @@
 Полная документация к API находится в файле `api_yamdb/static/redoc.yaml` и по эндпоинту `/redoc/`.
 
 ### Используемые технологии
-- Python 3.12
+- Python 3.13
 - Django
 - DRF
 - djangorestframework-simplejwt
+- uv
 
 ### Как запустить проект
-Клонировать репозиторий и перейти в него в командной строке:
-
-```
-git clone https://github.com/monk-time/api_yamdb.git
-cd api_yamdb
-```
-
-Для Linux/macOS здесь и далее используем python3 взамен python.
-
-Cоздать и активировать виртуальное окружение:
-
-```
-python -m venv env
-```
-
-* Если у вас Linux/macOS:
+1. Клонировать репозиторий и перейти в него в командной строке:
 
     ```
-    source env/bin/activate
+    git clone https://github.com/monk-time/api_yamdb.git
+    cd api_yamdb
     ```
 
-* Если у вас Windows:
+    Для Linux/macOS здесь и далее используем python3 взамен python.
+
+2. Cоздать виртуальное окружение и установить зависимости:
 
     ```
-    source env/Scripts/activate
+    uv sync
     ```
 
-Установить зависимости из файла requirements.txt:
+3. Выполнить миграции:
 
-```
-pip install -r requirements.txt
-```
+    ```
+    cd api_yamdb
+    uv run manage.py migrate
+    ```
 
-Выполнить миграции:
+4. Можно заполнить базу тестовыми данными:
 
-```
-python manage.py migrate
-```
+    ```
+    uv run manage.py load
+    ```
 
-Можно заполнить базу тестовыми данными:
+5. Запустить проект:
 
-```
-python manage.py load
-```
-
-Запустить проект:
-
-```
-python manage.py runserver
-```
+    ```
+    uv run manage.py runserver
+    ```
 
 ### Пользовательские роли и права доступа
 

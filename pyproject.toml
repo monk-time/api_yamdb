@@ -1,3 +1,22 @@
+[project]
+name = "api-yamdb"
+version = "0.1.0"
+description = "Проект YaMDb собирает отзывы пользователей на произведения"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.1.4",
+    "django-filter>=24.3",
+    "djangorestframework>=3.15.2",
+    "djangorestframework-simplejwt>=5.3.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "pytest-django>=4.9.0",
+]
+
 [tool.pytest.ini_options]
 pythonpath = ['api_yamdb']
 DJANGO_SETTINGS_MODULE = 'api_yamdb.settings'
@@ -13,6 +32,9 @@ preview = true
 output-format = "concise" # preview mode switches this to full
 exclude = ["migrations"]
 src = ["api_yamdb"]
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -41,6 +63,16 @@ allowed-confusables = [
     "А", "Б", "В", "Г", "Е", "З", "И", "К", "М", "Н", "О", "Р", "С", "У", "Ф", "Х",
 ]
 
+[tool.ruff.lint.pycodestyle]
+max-line-length = 100 # don't report (E501) lines of length 80..100 that cannot be split by autoformatter
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.flake8-pytest-style]
+parametrize-names-type = "csv"
+parametrize-values-type = "tuple"
+
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "N802",    # invalid-function-name       (common in test methods)
@@ -51,17 +83,3 @@ allowed-confusables = [
     "PLR0917", # too-many-positional         (common with fixtures)
     "RUF012",  # mutable-class-default       (common in test classes)
 ]
-
-[tool.ruff.lint.pycodestyle]
-max-line-length = 100 # don't report (E501) lines of length 80..100 that cannot be split by autoformatter
-
-[tool.ruff.lint.pydocstyle]
-convention = "pep257"
-
-[tool.ruff.lint.flake8-pytest-style]
-fixture-parentheses = false
-parametrize-names-type = "csv"
-parametrize-values-type = "tuple"
-
-[tool.ruff.format]
-quote-style = "single"

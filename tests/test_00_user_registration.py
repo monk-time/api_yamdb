@@ -175,7 +175,7 @@ class Test00UserRegistration:
             'Если POST-запрос от имени администратора к эндпоинту  '
             f'`{self.URL_ADMIN_CREATE_USER}` содержит корректные данные - '
             'в ответе должна быть информация об '
-            f'{', '.join(valid_data)} нового пользователя.'
+            f'{", ".join(valid_data)} нового пользователя.'
         )
         for field in valid_data:
             assert field in response_json, msg
